@@ -6,16 +6,14 @@ I developed a driver to output to an LED matrix comprised of WS2812 LEDs using P
 The driver receives information about LED location and Color, then converts and transmits that data to the LED array. This allows for various designs and characters to be displayed according to the matrix dimensions.
 
 ## Technologies
-- Technology
-- Technology
-- Technology
+- STM32L4
+- WS2812 LEDs
+- 5V power source
 
 ## Implementation
-A concise explanation of the interesting technical parts.
+Each LED is provided a corresponding PWM signal representing the color value of that LED. Those signals are passed down the array/matrix applying the the color value to the designated LED. This functionality is expanded to create various displays on the LEDs themselves by mapping color values to LED locations.
 
 ## Results / Features
-- Key result or capability
-- Key result or capability
-
-## Running the Project
-Instructions if someone can reasonably run/build it.
+- Full RGB spectrum support
+- Driver supports array up to 255 x 255
+- Modeler Code allows for diverse use-cases
