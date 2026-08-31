@@ -10,7 +10,6 @@ Because WS2812 LEDs use a timing-sensitive single-wire communication protocol, t
 
 ## Hardware
 
-* STM32 NUCLEO-L476RG development board
 * STM32L476RG microcontroller
 * WS2812 addressable LEDs
 * 5 V LED power supply
