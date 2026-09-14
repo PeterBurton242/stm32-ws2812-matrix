@@ -22,6 +22,7 @@
 #include "tim.h"
 #include "gpio.h"
 #include "ws2812.h"
+#include "matrix.h"
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
 
@@ -112,16 +113,7 @@ int main(void)
 
   while (1)
   {
-      for (uint16_t i = 0; i < LED_COUNT; i++)
-      {
-          WS2812_Clear();
-
-          WS2812_SetPixel(i, 100, 0, 0);
-
-          WS2812_Show();
-
-          HAL_Delay(250);
-      }
+	  Matrix_Test();
   }
 }
 /**
