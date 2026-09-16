@@ -5,31 +5,24 @@
 // This function lights up each of the rows of the defined matrix individually for 1 second
 void Matrix_Test(void)
 {
-//	const uint8_t FONT_COUNT = 36;
+//  RED GREEN BLUE DISPLAY
+//	Matrix_Draw_String("RED", 5, 0, 0);
+//	WS2812_Show();
+//	HAL_Delay(1000);
+//	WS2812_Clear();
 //
-//	for (uint8_t i = 0; i < FONT_COUNT; i++)
-//	{
-//		Matrix_DrawGlyph(FONT[i], 0, 0, 5, 0, 0);
+//	Matrix_Draw_String("GRN", 0, 5, 0);
+//	WS2812_Show();
+//	HAL_Delay(1000);
+//	WS2812_Clear();
 //
-//		WS2812_Show();
-//		HAL_Delay(500);
-//
-//		WS2812_Clear();
-//	}
-	Matrix_Write_String("RED", 5, 0, 0);
-	WS2812_Show();
-	HAL_Delay(1000);
-	WS2812_Clear();
+//	Matrix_Draw_String("BLU", 0, 0, 5);
+//	WS2812_Show();
+//	HAL_Delay(1000);
+//	WS2812_Clear();
 
-	Matrix_Write_String("GRN", 0, 5, 0);
+	Matrix_Draw_String("<<<", 0, 5, 0, 0);
 	WS2812_Show();
-	HAL_Delay(1000);
-	WS2812_Clear();
-
-	Matrix_Write_String("BLU", 0, 0, 5);
-	WS2812_Show();
-	HAL_Delay(1000);
-	WS2812_Clear();
 }
 
 
@@ -66,12 +59,7 @@ void Matrix_Set_Pixel(uint16_t x, uint16_t y, uint8_t red, uint8_t green, uint8_
 	WS2812_SetPixel(pix_num, red, green, blue);
 }
 
-void Matrix_DrawGlyph(const uint8_t *glyph,
-                      uint16_t start_x,
-                      uint16_t start_y,
-                      uint8_t red,
-                      uint8_t green,
-                      uint8_t blue)
+void Matrix_DrawGlyph(const uint8_t *glyph, uint16_t start_x, uint16_t start_y, uint8_t red, uint8_t green, uint8_t blue)
 {
     for (uint8_t row = 0; row < 7; row++)
     {
@@ -95,7 +83,7 @@ void Matrix_DrawGlyph(const uint8_t *glyph,
     }
 }
 
-void Matrix_Write_Character(char character, uint8_t position, uint8_t red, uint8_t green, uint8_t blue)
+void Matrix_Draw_Character(char character, int16_t position, uint8_t red, uint8_t green, uint8_t blue)
 {
 	const uint8_t *glyph = NULL;
 
@@ -113,14 +101,31 @@ void Matrix_Write_Character(char character, uint8_t position, uint8_t red, uint8
 	}
 }
 
+uint16_t Matrix_Calculate_String_Width(const char *string)
+{
+    uint16_t width = 0;
+    uint16_t i = 0;
 
-void Matrix_Write_String(const char *string,
-                         uint8_t red,
-                         uint8_t green,
-                         uint8_t blue)
+    for (i = 0; string[i] != '\0'; i++)
+    {
+        // Count characters
+    }
+
+    // 5 pixels per character + 1 pixel spacing
+    // Remove spacing after the final character
+    if (i > 0)
+    {
+        width = (i * 6) - 1;
+    }
+
+    return width;
+}
+
+
+void Matrix_Draw_String(const char *string, int16_t start_x, uint8_t red, uint8_t green, uint8_t blue)
 {
     for (int i = 0; string[i] != '\0'; i++)
     {
-        Matrix_Write_Character(string[i], i, red, green, blue);
+        Matrix_Draw_Character(string[i], (i * 6) + start_x, red, green, blue);
     }
 }
