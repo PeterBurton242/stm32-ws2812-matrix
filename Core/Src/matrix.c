@@ -5,17 +5,31 @@
 // This function lights up each of the rows of the defined matrix individually for 1 second
 void Matrix_Test(void)
 {
-	const uint8_t FONT_COUNT = 36;
+//	const uint8_t FONT_COUNT = 36;
+//
+//	for (uint8_t i = 0; i < FONT_COUNT; i++)
+//	{
+//		Matrix_DrawGlyph(FONT[i], 0, 0, 5, 0, 0);
+//
+//		WS2812_Show();
+//		HAL_Delay(500);
+//
+//		WS2812_Clear();
+//	}
+	Matrix_Write_String("RED", 5, 0, 0);
+	WS2812_Show();
+	HAL_Delay(1000);
+	WS2812_Clear();
 
-	for (uint8_t i = 0; i < FONT_COUNT; i++)
-	{
-		Matrix_DrawGlyph(FONT[i], 0, 0, 5, 0, 0);
+	Matrix_Write_String("GRN", 0, 5, 0);
+	WS2812_Show();
+	HAL_Delay(1000);
+	WS2812_Clear();
 
-		WS2812_Show();
-		HAL_Delay(500);
-
-		WS2812_Clear();
-	}
+	Matrix_Write_String("BLU", 0, 0, 5);
+	WS2812_Show();
+	HAL_Delay(1000);
+	WS2812_Clear();
 }
 
 
@@ -78,5 +92,35 @@ void Matrix_DrawGlyph(const uint8_t *glyph,
                 }
             }
         }
+    }
+}
+
+void Matrix_Write_Character(char character, uint8_t position, uint8_t red, uint8_t green, uint8_t blue)
+{
+	const uint8_t *glyph = NULL;
+
+	for (int i = 0; i < (sizeof(FONT_5x7) / sizeof(FONT_5x7[0])); i++)
+	{
+		if(FONT_5x7[i].character == character)
+		{
+			glyph = FONT_5x7[i].glyph;
+		}
+	}
+
+	if(glyph != NULL)
+	{
+		Matrix_DrawGlyph(glyph, (position * 6), 1, red, green, blue);
+	}
+}
+
+
+void Matrix_Write_String(const char *string,
+                         uint8_t red,
+                         uint8_t green,
+                         uint8_t blue)
+{
+    for (int i = 0; string[i] != '\0'; i++)
+    {
+        Matrix_Write_Character(string[i], i, red, green, blue);
     }
 }

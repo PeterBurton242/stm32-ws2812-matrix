@@ -15,4 +15,9 @@ void Matrix_DrawGlyph(const uint8_t *glyph,
                       uint8_t red,
                       uint8_t green,
                       uint8_t blue);
+void Matrix_Write_Character(char character, uint8_t position, uint8_t red, uint8_t green, uint8_t blue);
+void Matrix_Write_String(const char *string,
+                         uint8_t red,
+                         uint8_t green,
+                         uint8_t blue);
 #endif

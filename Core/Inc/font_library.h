@@ -1,3 +1,12 @@
+
+typedef struct
+{
+	char character;
+	const uint8_t *glyph;
+} Character_to_Font;
+
+
+
 // 5x7 Font
 // Each character is 5 pixels wide and 7 pixels tall.
 
@@ -371,3 +380,45 @@ const uint8_t *FONT[] = {
     FONT_0, FONT_1, FONT_2, FONT_3, FONT_4,
     FONT_5, FONT_6, FONT_7, FONT_8, FONT_9
 };
+
+const Character_to_Font FONT_5x7[] =
+{
+		{'A', FONT_A},
+		{'B', FONT_B},
+		{'C', FONT_C},
+		{'D', FONT_D},
+		{'E', FONT_E},
+		{'F', FONT_F},
+		{'G', FONT_G},
+		{'H', FONT_H},
+		{'I', FONT_I},
+		{'J', FONT_J},
+		{'K', FONT_K},
+		{'L', FONT_L},
+		{'M', FONT_M},
+		{'N', FONT_N},
+		{'O', FONT_O},
+		{'P', FONT_P},
+		{'Q', FONT_Q},
+		{'R', FONT_R},
+		{'S', FONT_S},
+		{'T', FONT_T},
+		{'U', FONT_U},
+		{'V', FONT_V},
+		{'W', FONT_W},
+		{'X', FONT_X},
+		{'Y', FONT_Y},
+		{'Z', FONT_Z},
+		{'0', FONT_0},
+		{'1', FONT_1},
+		{'2', FONT_2},
+		{'3', FONT_3},
+		{'4', FONT_4},
+		{'5', FONT_5},
+		{'6', FONT_6},
+		{'7', FONT_7},
+		{'8', FONT_8},
+		{'9', FONT_9}
+};
+
+
