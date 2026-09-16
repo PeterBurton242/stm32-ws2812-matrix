@@ -5,24 +5,23 @@
 // This function lights up each of the rows of the defined matrix individually for 1 second
 void Matrix_Test(void)
 {
-//  RED GREEN BLUE DISPLAY
-//	Matrix_Draw_String("RED", 5, 0, 0);
+//  // RED GREEN BLUE DISPLAY
+//	Matrix_Draw_String("RED", 0, 100, 0, 0);
 //	WS2812_Show();
 //	HAL_Delay(1000);
 //	WS2812_Clear();
 //
-//	Matrix_Draw_String("GRN", 0, 5, 0);
+//	Matrix_Draw_String("GRN", 0, 0, 100, 0);
 //	WS2812_Show();
 //	HAL_Delay(1000);
 //	WS2812_Clear();
 //
-//	Matrix_Draw_String("BLU", 0, 0, 5);
+//	Matrix_Draw_String("BLU", 0, 0, 0, 100);
 //	WS2812_Show();
 //	HAL_Delay(1000);
 //	WS2812_Clear();
 
-	Matrix_Draw_String("<<<", 0, 5, 0, 0);
-	WS2812_Show();
+	Matrix_Write_String("HELLO", 50, 0, 0);
 }
 
 
@@ -83,7 +82,7 @@ void Matrix_DrawGlyph(const uint8_t *glyph, uint16_t start_x, uint16_t start_y, 
     }
 }
 
-void Matrix_Draw_Character(char character, int16_t position, uint8_t red, uint8_t green, uint8_t blue)
+void Matrix_Draw_Character(char character, int16_t start_x, uint8_t red, uint8_t green, uint8_t blue)
 {
 	const uint8_t *glyph = NULL;
 
@@ -97,7 +96,7 @@ void Matrix_Draw_Character(char character, int16_t position, uint8_t red, uint8_
 
 	if(glyph != NULL)
 	{
-		Matrix_DrawGlyph(glyph, (position * 6), 1, red, green, blue);
+		Matrix_DrawGlyph(glyph, start_x, 1, red, green, blue);
 	}
 }
 
@@ -128,4 +127,31 @@ void Matrix_Draw_String(const char *string, int16_t start_x, uint8_t red, uint8_
     {
         Matrix_Draw_Character(string[i], (i * 6) + start_x, red, green, blue);
     }
+}
+
+
+
+
+void Matrix_Write_String(const char *string, uint8_t red, uint8_t green, uint8_t blue)
+{
+	uint16_t width = Matrix_Calculate_String_Width(string);
+
+	if(width > MATRIX_WIDTH)
+	{
+		int16_t overflow = width;
+		for(int16_t scroll = overflow; scroll > (-overflow); scroll--)
+		{
+			WS2812_Clear();
+			Matrix_Draw_String(string, scroll, red, green, blue);
+			WS2812_Show();
+			HAL_Delay(50);
+		}
+
+	}
+	else
+	{
+		WS2812_Clear();
+		Matrix_Draw_String(string, 0, red, green, blue);
+		WS2812_Show();
+	}
 }
