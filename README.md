@@ -25,6 +25,28 @@ Because WS2812 LEDs use a timing-sensitive single-wire communication protocol, t
 * Hardware Timers
 
 ## Implementation
+WS2812 timing specifications:
+
+Period of 1.25 μs (frequency 800 kHz)
+
+
+High Time (ns)
+Low Time (ns)
+0 Code
+200 - 500
+650 - 950
+1 Code
+550 - 850
+450 - 750
+Reset
+0
+Greater than 50,000
+
+<img width="697" height="313" alt="image" src="https://github.com/user-attachments/assets/37449adb-1826-4600-b9e2-6599e8a57e18" />
+
+Diagram showing the data flow from LED 1 to LED 198 on an example 9x22 matrix
+
+
 
 Each LED receives 24 bits of color data representing its red, green, and blue values. The driver converts the requested pixel colors into a buffer containing PWM duty-cycle values corresponding to digital `0` and `1` bits.
 
