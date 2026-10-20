@@ -371,6 +371,16 @@ const uint8_t FONT_5x7_9[7] = {
     0b01110
 };
 
+const uint8_t FONT_5x7_SPACE[7] = {
+	0b00000,
+	0b00000,
+	0b00000,
+	0b00000,
+	0b00000,
+	0b00000,
+	0b00000
+};
+
 const Character_to_Font FONT_5x7[] =
 {
 		{'A', FONT_5x7_A},
@@ -408,7 +418,8 @@ const Character_to_Font FONT_5x7[] =
 		{'6', FONT_5x7_6},
 		{'7', FONT_5x7_7},
 		{'8', FONT_5x7_8},
-		{'9', FONT_5x7_9}
+		{'9', FONT_5x7_9},
+		{' ', FONT_5x7_SPACE}
 };
 
 
