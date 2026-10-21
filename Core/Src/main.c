@@ -19,10 +19,17 @@
 /* Includes ------------------------------------------------------------------*/
 #include "main.h"
 #include "dma.h"
+#include "i2c.h"
 #include "tim.h"
 #include "gpio.h"
-#include "ws2812.h"
-#include "matrix.h"
+#include "lis3dh.h"
+#include <math.h>
+#include "lis3dh.h"
+#include "accel_capture.h"
+#include "lis3dh.h"
+#include "impact_detection.h"
+/* USER CODE END Includes */
+
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
 
@@ -91,31 +98,55 @@ int main(void)
   MX_GPIO_Init();
   MX_DMA_Init();
   MX_TIM1_Init();
+  MX_I2C1_Init();
+
   /* USER CODE BEGIN 2 */
+
+  HAL_StatusTypeDef accel_status = LIS3DH_Init();
+
+  uint8_t data_ready = 0;
+
+  float accel_x = 0.0f;
+  float accel_y = 0.0f;
+  float accel_z = 0.0f;
 
   /* USER CODE END 2 */
 
   /* Infinite loop */
   /* USER CODE BEGIN WHILE */
-  /* USER CODE BEGIN 2 */
-
-
-
-  /* USER CODE END 2 */
-
-  /* USER CODE BEGIN 2 */
-  /* USER CODE BEGIN 2 */
-
-
-  WS2812_Clear();
-
-  /* USER CODE END 2 */
-
   while (1)
   {
-	  Matrix_Test();
+    /* USER CODE END WHILE */
+
+	  if (accel_status == HAL_OK)
+	  {
+	      HAL_StatusTypeDef status =
+	          LIS3DH_DataReady(&data_ready);
+
+	      if (status == HAL_OK && data_ready)
+	      {
+	          status = LIS3DH_ReadAcceleration(
+	              &accel_x,
+	              &accel_y,
+	              &accel_z
+	          );
+
+	          if (status == HAL_OK)
+	          {
+	              Impact_ProcessSample(
+	                  accel_x,
+	                  accel_y,
+	                  accel_z
+	              );
+	          }
+	      }
+	  }
+
+    /* USER CODE BEGIN 3 */
   }
+  /* USER CODE END 3 */
 }
+
 /**
   * @brief System Clock Configuration
   * @retval None

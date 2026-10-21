@@ -41,7 +41,7 @@ extern TIM_HandleTypeDef htim1;
 void MX_TIM1_Init(void);
 
 void HAL_TIM_MspPostInit(TIM_HandleTypeDef *htim);
-extern DMA_HandleTypeDef hdma_tim1_ch1;
+
 /* USER CODE BEGIN Prototypes */
 
 /* USER CODE END Prototypes */
