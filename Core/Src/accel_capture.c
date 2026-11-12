@@ -23,8 +23,7 @@ void Accel_Capture(void)
             break;
         }
 
-        accel_buffer[i].time_us =
-            (HAL_GetTick() - start_ms) * 1000U;
+        accel_buffer[i].time_us = (HAL_GetTick() - start_ms) * 1000U;
 
         accel_buffer[i].x = x;
         accel_buffer[i].y = y;

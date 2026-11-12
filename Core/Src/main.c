@@ -28,9 +28,9 @@
 #include "accel_capture.h"
 #include "lis3dh.h"
 #include "impact_detection.h"
-#include "vl53l1x.h"
-#include "vl53l1_platform.h"
-#include "VL53L1X_api.h"
+#include "make_detect.h"
+#include "matrix.h"
+#include <stdio.h>
 /* USER CODE END Includes */
 
 /* Private includes ----------------------------------------------------------*/
@@ -56,10 +56,7 @@
 /* Private variables ---------------------------------------------------------*/
 
 /* USER CODE BEGIN PV */
-volatile uint16_t distance_mm = 0;
-volatile uint8_t data_ready = 0;
-volatile uint8_t range_status = 0;
-volatile int8_t read_status = 0;
+
 /* USER CODE END PV */
 
 /* Private function prototypes -----------------------------------------------*/
@@ -107,44 +104,8 @@ int main(void)
   MX_I2C1_Init();
 
   /* USER CODE BEGIN 2 */
-
-
-  uint8_t boot_state = 0;
-
-  int8_t boot_status = 0;
-  int8_t init_status = -1;
-
-  boot_status = VL53L1X_BootState(0x52, &boot_state);
-
-  if (boot_status == 0 && (boot_state & 0x01))
-  {
-      init_status = VL53L1X_SensorInit(0x52);
-  }
-
-  int8_t mode_status = -1;
-  int8_t timing_status = -1;
-  int8_t period_status = -1;
-  int8_t start_status = -1;
-
-  if (init_status == 0)
-  {
-      mode_status = VL53L1X_SetDistanceMode(0x52, 1);
-
-      if (mode_status == 0)
-      {
-          timing_status = VL53L1X_SetTimingBudgetInMs(0x52, 20);
-      }
-
-      if (timing_status == 0)
-      {
-          period_status = VL53L1X_SetInterMeasurementInMs(0x52, 25);
-      }
-
-      if (period_status == 0)
-      {
-          start_status = VL53L1X_StartRanging(0x52);
-      }
-  }
+  MakeDetectInit();
+  LIS3DH_Init();
 
 
   /* USER CODE END 2 */
@@ -152,27 +113,12 @@ int main(void)
   /* Infinite loop */
   /* USER CODE BEGIN WHILE */
   while(1){
-
-	  read_status = VL53L1X_CheckForDataReady(0x52, (uint8_t *)&data_ready);
-
-	  if (read_status == 0 && data_ready)
-	  {
-	      read_status = VL53L1X_GetRangeStatus(
-	          0x52, (uint8_t *)&range_status
-	      );
-
-	      if (read_status == 0)
-	      {
-	          read_status = VL53L1X_GetDistance(
-	              0x52, (uint16_t *)&distance_mm
-	          );
-	      }
-
-	      if (read_status == 0)
-	      {
-	          read_status = VL53L1X_ClearInterrupt(0x52);
-	      }
+	  Accel_Capture();
+	  MakeDetect_MadeShot();
+	  if(Impact_Detection() == 1){
+		  Matrix_Write_String("ATT", 0, 0, 50);
 	  }
+
 
   }
     /* USER CODE BEGIN 3 */

@@ -1,4 +1,5 @@
 #include "impact_detection.h"
+#include "accel_capture.h"
 #include <math.h>
 
 volatile uint32_t impact_count = 0;
@@ -31,4 +32,19 @@ void Impact_ProcessSample(float x, float y, float z)
             first_impact = 0;
         }
     }
+}
+
+
+int Impact_Detection(void){
+	int in_impact_count;
+	in_impact_count = impact_count;
+	for (int i = 0; i < ACCEL_SAMPLE_COUNT; i++){
+			Impact_ProcessSample(accel_buffer[i].x, accel_buffer[i].y, accel_buffer[i].z);
+	}
+	if(impact_count > in_impact_count){
+		return 1;
+	}
+	else{
+		return 0;
+	}
 }

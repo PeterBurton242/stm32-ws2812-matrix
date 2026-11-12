@@ -11,5 +11,6 @@ extern volatile float impact_value;
 extern volatile float peak_impact;
 
 void Impact_ProcessSample(float x, float y, float z);
+int Impact_Detection(void);
 
 #endif
