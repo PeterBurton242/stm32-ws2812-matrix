@@ -3,7 +3,7 @@
 
 #include "main.h"
 
-#define IMPACT_THRESHOLD 0.15f
+#define IMPACT_THRESHOLD 0.5f
 #define IMPACT_COOLDOWN_MS 900U
 
 extern volatile uint32_t impact_count;
