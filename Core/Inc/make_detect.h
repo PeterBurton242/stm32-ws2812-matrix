@@ -11,8 +11,14 @@
 #define IN_RIM_THRESHOLD 222 // max distance from the back of the rim to the center of the ball
 
 
+typedef enum {
+	SHOT_MISS = 0,
+	SHOT_MAKE = 1,
+	SHOT_NONE = 3
+} ShotResult;
 
-void MakeDetectInit(void);
-int MakeDetect_MadeShot(void);
+
+void Make_Detect_Init(void);
+ShotResult Make_Detect_MadeShot(void);
 
 #endif /* INC_MAKE_DETECT_H_ */

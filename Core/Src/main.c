@@ -17,6 +17,7 @@
   */
 /* USER CODE END Header */
 /* Includes ------------------------------------------------------------------*/
+#include <impact_detect.h>
 #include "main.h"
 #include "dma.h"
 #include "i2c.h"
@@ -27,7 +28,6 @@
 #include "lis3dh.h"
 #include "accel_capture.h"
 #include "lis3dh.h"
-#include "impact_detection.h"
 #include "make_detect.h"
 #include "matrix.h"
 #include <stdio.h>
@@ -104,7 +104,7 @@ int main(void)
   MX_I2C1_Init();
 
   /* USER CODE BEGIN 2 */
-  MakeDetectInit();
+  Make_Detect_Init();
   LIS3DH_Init();
 
 
@@ -113,8 +113,14 @@ int main(void)
   /* Infinite loop */
   /* USER CODE BEGIN WHILE */
   while(1){
-	  Accel_Capture();
-	  MakeDetect_MadeShot();
+
+	  if(Make_Detect_MadeShot() == SHOT_MAKE){
+		  Matrix_Write_String("YES", 0, 50, 0); // green means make
+	  }
+	  else{
+		  Matrix_Write_String("NO", 50, 0, 0); // red means miss
+	  }
+
 	  if(Impact_Detection() == 1){
 		  Matrix_Write_String("ATT", 0, 0, 50);
 	  }

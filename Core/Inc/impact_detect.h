@@ -1,5 +1,5 @@
-#ifndef IMPACT_DETECTION_H
-#define IMPACT_DETECTION_H
+#ifndef IMPACT_DETECT_H
+#define IMPACT_DETECT_H
 
 #include "main.h"
 
