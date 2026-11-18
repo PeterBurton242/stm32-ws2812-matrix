@@ -113,14 +113,16 @@ int main(void)
   while(1){
 
 	  if(Make_Detect_MadeShot() == SHOT_MAKE){
-		  Matrix_Write_String("YES", 0, 50, 0); // green means make
+		  Matrix_Write_String("YES", 0, 10, 0); // green means make
 	  }
 	  else{
-		  Matrix_Write_String("NO", 50, 0, 0); // red means miss
-	  }
+		  if(Impact_Detection() == 1){
+			  Matrix_Write_String("NO", 10, 0, 0); // red means miss
+		  }
+		  else{
+			  Matrix_Write_String("", 0, 0, 0); // NULL
+		  }
 
-	  if(Impact_Detection() == 1){
-		  Matrix_Write_String("ATT", 0, 0, 50);
 	  }
 
 
