@@ -7,6 +7,11 @@
 
 uint16_t Make_Detect_Get_Distance(void);
 
+
+/// name: Make_Detect_Init
+/// inputs: none
+/// function: initializes ToF sensor using function from the VL53L1X library
+/// return: none
 void Make_Detect_Init(void){
 	  uint8_t boot_state = 0;
 
@@ -40,6 +45,10 @@ void Make_Detect_Init(void){
 	  }
 }
 
+/// name: Make_Detect_Get_Distance
+/// inputs: none
+/// function: gets the distance in mm from the ToF sensor
+/// return: distance in mm
 uint16_t Make_Detect_Get_Distance(void){
 	uint8_t range_status = 0;
 	uint16_t distance_mm = 0;
@@ -65,6 +74,10 @@ uint16_t Make_Detect_Get_Distance(void){
 	return distance_mm;
 }
 
+/// name: Make_Detect_MadeShot
+/// inputs: none
+/// function: determines if something passed through the rim
+/// return: shot result
 ShotResult Make_Detect_MadeShot(void){
 
 	ShotResult shot_result = SHOT_NONE;
@@ -74,7 +87,7 @@ ShotResult Make_Detect_MadeShot(void){
 	  shot_result = SHOT_MAKE;
 	}
 	else{
-	  shot_result = SHOT_MISS;
+	  shot_result = SHOT_NO_MAKE;
 	}
 
 	return shot_result;

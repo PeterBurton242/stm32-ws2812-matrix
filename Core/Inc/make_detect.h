@@ -12,9 +12,9 @@
 
 
 typedef enum {
-	SHOT_MISS = 0,
+	SHOT_NO_MAKE = 0,
 	SHOT_MAKE = 1,
-	SHOT_NONE = 3
+	SHOT_NONE = 2
 } ShotResult;
 
 

@@ -23,11 +23,9 @@
 #include "i2c.h"
 #include "tim.h"
 #include "gpio.h"
-#include "lis3dh.h"
 #include <math.h>
 #include "lis3dh.h"
 #include "accel_capture.h"
-#include "lis3dh.h"
 #include "make_detect.h"
 #include "matrix.h"
 #include <stdio.h>
