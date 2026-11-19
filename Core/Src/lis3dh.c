@@ -1,6 +1,37 @@
 
 #include "lis3dh.h"
 #include "i2c.h"
+#include "stm32l4xx_hal.h"
+
+
+HAL_StatusTypeDef LIS3DH_EnableImpactInterrupt(void);
+
+HAL_StatusTypeDef LIS3DH_WriteRegister(uint8_t reg, uint8_t value)
+{
+    return HAL_I2C_Mem_Write(
+        &hi2c1,
+        0x19 << 1,
+        reg,
+        I2C_MEMADD_SIZE_8BIT,
+        &value,
+        1,
+        100
+    );
+}
+
+HAL_StatusTypeDef LIS3DH_ReadRegister(uint8_t reg, uint8_t *value)
+{
+    return HAL_I2C_Mem_Read(
+        &hi2c1,
+        0x19 << 1,
+        reg,
+        I2C_MEMADD_SIZE_8BIT,
+        value,
+        1,
+        100
+    );
+}
+
 
 HAL_StatusTypeDef LIS3DH_ReadID(uint8_t *id)
 {
@@ -60,6 +91,10 @@ HAL_StatusTypeDef LIS3DH_Init(void)
         1,
         100
     );
+    if (status != HAL_OK)
+        return status;
+
+    status = LIS3DH_EnableImpactInterrupt();
 
     return status;
 }
@@ -136,6 +171,64 @@ HAL_StatusTypeDef LIS3DH_DataReady(uint8_t *ready)
 
     return HAL_OK;
 }
+
+
+
+HAL_StatusTypeDef LIS3DH_EnableImpactInterrupt(void)
+{
+    HAL_StatusTypeDef status;
+    uint8_t ctrl5;
+    uint8_t reference;
+    uint8_t int_source;
+
+    // 1. Disable interrupt output during configuration
+    status = LIS3DH_WriteRegister(LIS3DH_CTRL_REG3, 0x00);
+    if (status != HAL_OK) return status;
+
+    // 2. Enable high-pass filter for interrupt generator 1
+    // Normal mode, default cutoff, HP_IA1 enabled
+    status = LIS3DH_WriteRegister(LIS3DH_CTRL_REG2, 0x01);
+    if (status != HAL_OK) return status;
+
+    // 3. Reset high-pass filter reference
+    status = LIS3DH_ReadRegister(0x26, &reference);
+    if (status != HAL_OK) return status;
+
+    // 4. Configure interrupt generator 1
+    // OR combination of high/low events on X, Y, Z
+    status = LIS3DH_WriteRegister(LIS3DH_INT1_CFG, 0x2A);
+    if (status != HAL_OK) return status;
+
+    // 5. Set impact threshold
+    // 0x02 = approximately 0.372g at +/-16g
+    status = LIS3DH_WriteRegister(LIS3DH_INT1_THS, 0x02);
+    if (status != HAL_OK) return status;
+
+    // 6. No minimum duration required
+    status = LIS3DH_WriteRegister(LIS3DH_INT1_DURATION, 0x00);
+    if (status != HAL_OK) return status;
+
+    // 7. Enable latched interrupt mode
+    status = LIS3DH_ReadRegister(LIS3DH_CTRL_REG5, &ctrl5);
+    if (status != HAL_OK) return status;
+
+    ctrl5 |= 0x08;  // LIR_INT1
+
+    status = LIS3DH_WriteRegister(LIS3DH_CTRL_REG5, ctrl5);
+    if (status != HAL_OK) return status;
+
+    // 8. Clear any pending interrupt
+    status = LIS3DH_ReadRegister(LIS3DH_INT1_SRC, &int_source);
+    if (status != HAL_OK) return status;
+
+    // 9. Route interrupt generator 1 to INT1 only
+    status = LIS3DH_WriteRegister(LIS3DH_CTRL_REG3, 0x40);
+    if (status != HAL_OK) return status;
+
+    return HAL_OK;
+}
+
+
 
 
 

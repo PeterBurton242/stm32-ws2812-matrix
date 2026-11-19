@@ -17,23 +17,15 @@
   */
 /* USER CODE END Header */
 /* Includes ------------------------------------------------------------------*/
-#include <impact_detect.h>
 #include "main.h"
 #include "dma.h"
 #include "i2c.h"
 #include "tim.h"
 #include "gpio.h"
-#include <math.h>
-#include "lis3dh.h"
-#include "accel_capture.h"
-#include "make_detect.h"
-#include "matrix.h"
-#include <stdio.h>
-/* USER CODE END Includes */
-
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
-
+#include "make_detect.h"
+#include "lis3dh.h"
 /* USER CODE END Includes */
 
 /* Private typedef -----------------------------------------------------------*/
@@ -54,13 +46,23 @@
 /* Private variables ---------------------------------------------------------*/
 
 /* USER CODE BEGIN PV */
-
+uint32_t last_impact_time = 0;
 /* USER CODE END PV */
 
 /* Private function prototypes -----------------------------------------------*/
 void SystemClock_Config(void);
 /* USER CODE BEGIN PFP */
+volatile uint8_t impact_pending = 0;
+volatile uint32_t impact_interrupt_count = 0;
 
+void HAL_GPIO_EXTI_Callback(uint16_t GPIO_Pin)
+{
+    if (GPIO_Pin == GPIO_PIN_1)
+    {
+        impact_pending = 1;
+        impact_interrupt_count++;
+    }
+}
 /* USER CODE END PFP */
 
 /* Private user code ---------------------------------------------------------*/
@@ -100,33 +102,38 @@ int main(void)
   MX_DMA_Init();
   MX_TIM1_Init();
   MX_I2C1_Init();
-
   /* USER CODE BEGIN 2 */
   Make_Detect_Init();
   LIS3DH_Init();
-
-
   /* USER CODE END 2 */
 
   /* Infinite loop */
   /* USER CODE BEGIN WHILE */
-  while(1){
+  volatile uint8_t debug_int_source = 0;
+  volatile GPIO_PinState debug_int_pin = GPIO_PIN_RESET;
+  volatile HAL_StatusTypeDef debug_read_status = HAL_OK;
 
-	  if(Make_Detect_MadeShot() == SHOT_MAKE){
-		  Matrix_Write_String("YES", 0, 10, 0); // green means make
-	  }
-	  else{
-		  if(Impact_Detection() == 1){
-			  Matrix_Write_String("NO", 10, 0, 0); // red means miss
-		  }
-		  else{
-			  Matrix_Write_String("", 0, 0, 0); // NULL
-		  }
+  while (1)
+  {
+      // Check whether the accelerometer generated an interrupt
+      debug_int_pin = HAL_GPIO_ReadPin(GPIOA, GPIO_PIN_1);
 
-	  }
+      if (impact_pending)
+      {
+          impact_pending = 0;
 
+          // Clear the latched interrupt
+          debug_read_status = LIS3DH_ReadRegister(
+              LIS3DH_INT1_SRC,
+              (uint8_t *)&debug_int_source
+          );
+      }
 
+      HAL_Delay(10);
   }
+
+    /* USER CODE END WHILE */
+
     /* USER CODE BEGIN 3 */
   /* USER CODE END 3 */
 }
