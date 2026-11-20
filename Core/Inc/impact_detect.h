@@ -3,14 +3,14 @@
 
 #include "main.h"
 
-#define IMPACT_THRESHOLD 0.5f
-#define IMPACT_COOLDOWN_MS 900U
+typedef enum {
+	IMPACT_NO = 0,
+	IMPACT_YES = 1,
+	IMPACT_UNDEF = 2
+} ImpactResult;
 
-extern volatile uint32_t impact_count;
-extern volatile float impact_value;
-extern volatile float peak_impact;
-
-void Impact_ProcessSample(float x, float y, float z);
-int Impact_Detection(void);
+void Impact_Detect_EXTI_Callback(uint16_t GPIO_Pin);
+void Impact_Detect_Init(void);
+ImpactResult Impact_Detection(void);
 
 #endif

@@ -12,13 +12,13 @@
 
 
 typedef enum {
-	SHOT_NO_MAKE = 0,
-	SHOT_MAKE = 1,
-	SHOT_NONE = 2
-} ShotResult;
+	MAKE_NO = 0,
+	MAKE_YES = 1,
+	MAKE_UNDEF = 2
+} MakeResult;
 
 
 void Make_Detect_Init(void);
-ShotResult Make_Detect_MadeShot(void);
+MakeResult Make_Detection(void);
 
 #endif /* INC_MAKE_DETECT_H_ */

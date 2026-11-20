@@ -16,7 +16,6 @@
 #define LIS3DH_ZYXDA		0x08
 #define LIS3DH_ZYXOR		0x80
 
-
 #define LIS3DH_CTRL_REG3	0x22
 #define LIS3DH_CTRL_REG5	0x24
 
@@ -32,11 +31,7 @@ HAL_StatusTypeDef LIS3DH_ReadRegister(uint8_t reg, uint8_t *value);
 HAL_StatusTypeDef LIS3DH_ReadID(uint8_t *id);
 HAL_StatusTypeDef LIS3DH_Init(void);
 HAL_StatusTypeDef LIS3DH_DataReady(uint8_t *ready);
-HAL_StatusTypeDef LIS3DH_ReadAcceleration(
-    float *x,
-    float *y,
-    float *z
-);
+HAL_StatusTypeDef LIS3DH_ReadAcceleration(float *x, float *y, float *z);
 
 #endif
 

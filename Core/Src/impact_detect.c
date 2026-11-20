@@ -1,48 +1,43 @@
-#include <impact_detect.h>
-#include "accel_capture.h"
-#include <math.h>
+#include "impact_detect.h"
+#include "lis3dh.h"
 
-volatile uint32_t impact_count = 0;
-volatile float impact_value = 0.0f;
-volatile float peak_impact = 0.0f;
+volatile uint8_t impact_pending = 0;
+uint32_t impact_count = 0;
 
-static uint32_t last_impact_time = 0;
-static uint8_t first_impact = 1;
+uint8_t source;
 
-void Impact_Process_Sample(float x, float y, float z){
-    float magnitude = sqrtf( x * x + y * y + z * z);
-
-    impact_value = fabsf(magnitude - 1.0f); //subtract 1 G to account for earths pull
-
-    if (impact_value > peak_impact){ // keep track of impact peak
-        peak_impact = impact_value;
+// Called by the STM32 GPIO EXTI callback
+void Impact_Detect_EXTI_Callback(uint16_t GPIO_Pin){
+    if (GPIO_Pin == GPIO_PIN_1){
+        impact_pending = 1;
     }
+}
 
-    uint32_t now = HAL_GetTick(); // time stamp
+void Impact_Detect_Init(void){
+	impact_pending = 0;
+	LIS3DH_Init();
+}
 
-    if (impact_value >= IMPACT_THRESHOLD){
-    	// ensure new impact is after the cooldown period
-        if (first_impact || (uint32_t)(now - last_impact_time) >= IMPACT_COOLDOWN_MS)
-        {
-            impact_count++;
-            last_impact_time = now;
-            first_impact = 0;
+
+ImpactResult Impact_Detection(void){
+	ImpactResult result = IMPACT_UNDEF;
+    // First interrupt starts the cool down
+    if (impact_pending){
+        impact_pending = 0;
+        if (LIS3DH_ReadRegister(LIS3DH_INT1_SRC, &source) == HAL_OK){
+        	result = IMPACT_YES;
+        }
+        else{
+        	result = IMPACT_UNDEF;
         }
     }
+    else{
+    	result = IMPACT_NO;
+    }
+
+    return result;
 }
 
 
-int Impact_Detection(void){
-	Accel_Capture();
-	int in_impact_count;
-	in_impact_count = impact_count;
-	for (int i = 0; i < ACCEL_SAMPLE_COUNT; i++){
-			Impact_Process_Sample(accel_buffer[i].x, accel_buffer[i].y, accel_buffer[i].z);
-	}
-	if(impact_count > in_impact_count){
-		return 1;
-	}
-	else{
-		return 0;
-	}
-}
+
+

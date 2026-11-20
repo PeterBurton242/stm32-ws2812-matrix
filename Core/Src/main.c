@@ -22,10 +22,14 @@
 #include "i2c.h"
 #include "tim.h"
 #include "gpio.h"
+#include <stdio.h>
+
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
+#include "matrix.h"
 #include "make_detect.h"
-#include "lis3dh.h"
+#include "impact_detect.h"
+#include "shot_classification.h"
 /* USER CODE END Includes */
 
 /* Private typedef -----------------------------------------------------------*/
@@ -46,21 +50,17 @@
 /* Private variables ---------------------------------------------------------*/
 
 /* USER CODE BEGIN PV */
-uint32_t last_impact_time = 0;
+
 /* USER CODE END PV */
 
 /* Private function prototypes -----------------------------------------------*/
 void SystemClock_Config(void);
 /* USER CODE BEGIN PFP */
-volatile uint8_t impact_pending = 0;
-volatile uint32_t impact_interrupt_count = 0;
-
 void HAL_GPIO_EXTI_Callback(uint16_t GPIO_Pin)
 {
     if (GPIO_Pin == GPIO_PIN_1)
     {
-        impact_pending = 1;
-        impact_interrupt_count++;
+    	Impact_Detect_EXTI_Callback(GPIO_Pin);
     }
 }
 /* USER CODE END PFP */
@@ -104,33 +104,40 @@ int main(void)
   MX_I2C1_Init();
   /* USER CODE BEGIN 2 */
   Make_Detect_Init();
-  LIS3DH_Init();
+  Impact_Detect_Init();
   /* USER CODE END 2 */
 
   /* Infinite loop */
   /* USER CODE BEGIN WHILE */
-  volatile uint8_t debug_int_source = 0;
-  volatile GPIO_PinState debug_int_pin = GPIO_PIN_RESET;
-  volatile HAL_StatusTypeDef debug_read_status = HAL_OK;
+
+  uint8_t shot_count = 0;
+  uint8_t make_count = 0;
+  uint8_t new_score = 0;
+  char score_string[4];
+  ShotResult shot = SHOT_NONE;
 
   while (1)
   {
-      // Check whether the accelerometer generated an interrupt
-      debug_int_pin = HAL_GPIO_ReadPin(GPIOA, GPIO_PIN_1);
+	  shot = Shot_Classification_Update();
+	  if(shot == SHOT_MAKE){
+		  shot_count++;
+		  make_count++;
+		  new_score = 1;
+	  }
+	  else if (shot == SHOT_MISS){
+		  shot_count++;
+		  new_score = 1;
+	  }
+	  if(new_score == 1){
+	  	  snprintf(score_string, sizeof(score_string), "%d %d", make_count, shot_count);
+	  	  Matrix_Write_String(score_string, 0, 10, 0);
+	  	  new_score = 0;
+	  }
 
-      if (impact_pending)
-      {
-          impact_pending = 0;
 
-          // Clear the latched interrupt
-          debug_read_status = LIS3DH_ReadRegister(
-              LIS3DH_INT1_SRC,
-              (uint8_t *)&debug_int_source
-          );
-      }
-
-      HAL_Delay(10);
   }
+
+
 
     /* USER CODE END WHILE */
 

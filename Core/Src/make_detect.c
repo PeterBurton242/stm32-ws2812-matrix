@@ -74,20 +74,20 @@ uint16_t Make_Detect_Get_Distance(void){
 	return distance_mm;
 }
 
-/// name: Make_Detect_MadeShot
+/// name: Make_Detection
 /// inputs: none
 /// function: determines if something passed through the rim
-/// return: shot result
-ShotResult Make_Detect_MadeShot(void){
+/// return: make result
+MakeResult Make_Detection(void){
 
-	ShotResult shot_result = SHOT_NONE;
+	MakeResult shot_result = MAKE_UNDEF;
 	uint16_t distance_mm = Make_Detect_Get_Distance();
 
 	if(distance_mm <= IN_RIM_THRESHOLD){
-	  shot_result = SHOT_MAKE;
+	  shot_result = MAKE_YES;
 	}
 	else{
-	  shot_result = SHOT_NO_MAKE;
+	  shot_result = MAKE_NO;
 	}
 
 	return shot_result;
